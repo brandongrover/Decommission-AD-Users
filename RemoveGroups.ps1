@@ -1,3 +1,10 @@
+#Vars
+$pwd = $MyInvocation.MyCommand.Path
+$path = Split-Path $pwd -Parent
+$eoeList = Import-Csv -Path $path\DisabledAccounts.csv -Delimiter "," -Header ID
+$date = Get-Date -Format "yyyy-MM-dd"
+$searchBase = "CN=Users,DC=homelab,DC=com"
+
 #Admin Check
 $CurrentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent()) 
 if (($CurrentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) -eq $false) 
@@ -17,12 +24,6 @@ if (($CurrentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrato
     }
 }
 Clear-Host
-
-#Vars
-$pwd = $MyInvocation.MyCommand.Path
-$path = Split-Path $pwd -Parent
-$eoeList = Import-Csv -Path $path\DisabledAccounts.csv -Delimiter "," -Header ID
-$date = Get-Date -Format "yyyy-MM-dd"
 
 #Header
 $item = "*"
@@ -45,7 +46,7 @@ Write-Host ""
 Write-Host $item.padright(27,'*')
 Write-Host $item.padright(2,'*')"Begin removing groups **"
 Write-Host $item.padright(27,'*')
-$userList = Get-ADUser -Filter * -SearchBase "CN=Users,DC=homelab,DC=com"  | Where-Object {$_.Enabled -eq $false -or $_.Enabled -eq $null} | Select-Object -Property SamAccountName, SID
+$userList = Get-ADUser -Filter * -SearchBase $searchBase  | Where-Object {$_.Enabled -eq $false -or $_.Enabled -eq $null} | Select-Object -Property SamAccountName, SID
 
 $array | ForEach-Object {
     $user = $userList | Where-Object -Property SamAccountName -eq $_
