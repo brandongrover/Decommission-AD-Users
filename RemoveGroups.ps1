@@ -45,7 +45,7 @@ Write-Host ""
 Write-Host $item.padright(27,'*')
 Write-Host $item.padright(2,'*')"Begin removing groups **"
 Write-Host $item.padright(27,'*')
-$userList = Get-ADUser -Filter * -SearchBase "CN=Users,DC=ad,DC=homelab,DC=com"  | Where-Object {$_.Enabled -eq $false -or $_.Enabled -eq $null} | Select-Object -Property SamAccountName, SID
+$userList = Get-ADUser -Filter * -SearchBase "CN=Users,DC=homelab,DC=com"  | Where-Object {$_.Enabled -eq $false -or $_.Enabled -eq $null} | Select-Object -Property SamAccountName, SID
 
 $array | ForEach-Object {
     $user = $userList | Where-Object -Property SamAccountName -eq $_
